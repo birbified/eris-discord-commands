@@ -37,7 +37,7 @@ class CommandManager {
         const categories = req(path);
         for (const cat of Object.values(categories)) {
             for (const command of Object.values(cat)) {
-                this.commands.push(command);
+                this.commands.push(new command(this.client));
             }
         }
         
