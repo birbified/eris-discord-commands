@@ -1,0 +1,30 @@
+{
+  "name": "eris-discord-commands",
+  "version": "1.0.0",
+  "description": "A simple eris command manager.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/birbified/eris-discord-commands.git"
+  },
+  "keywords": [
+    "eris",
+    "commands",
+    "command",
+    "discord",
+    "manager",
+    "handler"
+  ],
+  "author": "birb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/birbified/eris-discord-commands/issues"
+  },
+  "homepage": "https://github.com/birbified/eris-discord-commands#readme",
+  "dependencies": {
+    "require-all": "^3.0.0"
+  }
+}
