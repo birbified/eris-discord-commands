@@ -20,12 +20,12 @@ class Command {
         this.category = options.category || 'Misc';
         this.perms = {
             bot: {
-                role: options.perms.bot && options.perms.bot.role ? options.perms.bot.role : [],
-                channel: options.perms.bot && options.perms.bot.channel ? options.perms.bot.channel : []
+                role: options.perms && options.perms.bot && options.perms.bot.role ? options.perms.bot.role : [],
+                channel: options.perms && options.perms.bot && options.perms.bot.channel ? options.perms.bot.channel : []
             },
             member: {
-                role: options.perms.member && options.perms.member.role ? options.perms.member.role : [],
-                channel: options.perms.member && options.perms.member.channel ? options.perms.member.channel : []
+                role: options.perms && options.perms.member && options.perms.member.role ? options.perms.member.role : [],
+                channel: options.perms && options.perms.member && options.perms.member.channel ? options.perms.member.channel : []
             }
         }
     }
