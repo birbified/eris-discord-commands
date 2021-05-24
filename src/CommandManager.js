@@ -6,7 +6,7 @@ const defaultErrorMessages = {
             description: '**Missing Permissions**\n{missingPerms}'
         }
     },
-    cooldown: 'This command is in a cooldown. Time Left: {cooldown}',
+    cooldown: 'This command is in a cooldown.',
     ownerOnly: 'This command is owner-only. You cannot use it.'
 };
 
