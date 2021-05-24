@@ -103,15 +103,17 @@ class CommandManager {
             if (!message.channel.permissionsOf(message.author.id).has(channelPerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.channel.map(x => `\`${x}\``)}`));
         }
         
-        this.cooldowns.push({
-            command: command.name,
-            user: message.author.id
-        });
-        setTimeout(() => {
-            this.cooldowns = this.cooldowns.filter(x => x.command !== command.name && x.user !== message.author.id);
-        }, command.cooldown);
-        
         command.run(message, args);
+        
+        if (command.cooldown !== 0) {
+            this.cooldowns.push({
+                command: command.name,
+                user: message.author.id
+            });
+            setTimeout(() => {
+                this.cooldowns = this.cooldowns.filter(x => x.command !== command.name && x.user !== message.author.id);
+            }, command.cooldown);
+        }
     }
 }
 
