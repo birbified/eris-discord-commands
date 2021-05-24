@@ -92,7 +92,7 @@ class CommandManager {
         if (command.ownerOnly && message.author.id !== this.ownerId) return message.channel.createMessage(this.errorMessages.ownerOnly);
         
         for (const rolePerm of command.perms.bot.role) {
-            if (!message.channel.guild.members.get(this.client.user.id).has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.bot.role.map(x => `\`${x}\``)}`)); 
+            if (!message.channel.guild.members.get(this.client.user.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.bot.role.map(x => `\`${x}\``)}`)); 
         }
         
         for (const channelPerm of command.perms.bot.channel) {
@@ -100,7 +100,7 @@ class CommandManager {
         }
         
         for (const rolePerm of command.perms.member.role) {
-            if (!message.channel.guild.members.get(this.client.user.id).has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.role.map(x => `\`${x}\``)}`)); 
+            if (!message.channel.guild.members.get(this.client.user.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.role.map(x => `\`${x}\``)}`)); 
         }
         
         for (const channelPerm of command.perms.member.channel) {
