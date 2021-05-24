@@ -3,6 +3,7 @@ const req = require('require-all');
 class CommandManager {
     /**
      * @param {Eris.Client} client - Eris client
+     * @param {Object} options - Options
      */
     
     constructor(client) {
@@ -29,6 +30,15 @@ class CommandManager {
         
         this.registeredPath = true;
         return this;
+    }
+    
+    /**
+     * @param {Eris.Message} message - Eris message object
+     * @param {String} prefix - Command prefix
+     */
+    
+    handleCommands(message, prefix) {
+        if (this.registeredPath === false) throw new Error('Command path must be registered.');
     }
 }
 
