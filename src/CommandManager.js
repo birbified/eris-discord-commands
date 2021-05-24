@@ -1,12 +1,8 @@
 const req = require('require-all');
 
 const defaultErrorMessages = {
-    missingPerms: {
-        embed: {
-            description: '**Missing Permissions**\n{missingPerms}'
-        }
-    },
-    cooldown: 'This command is in a cooldown. Time Left: {cooldown}',
+    missingPerms: 'Missing Permissions: {missingPerms}',
+    cooldown: 'This command is in a cooldown.',
     ownerOnly: 'This command is owner-only. You cannot use it.'
 };
 
@@ -25,6 +21,8 @@ class CommandManager {
         this.client = client;
         this.registeredPath = false;
         this.registeredErrorMessages = false;
+        this.cooldowns = [];
+        this.ownerId = ownerId;
     }
     
     /**
@@ -70,6 +68,52 @@ class CommandManager {
     handleCommands(message, prefix) {
         if (this.registeredPath === false) throw new Error('Command path must be registered.');
         if (this.registeredErrorMessages === false) throw new Error(`Command path must be registered. Use 'registerErrorMessages()' for default error messages.`);
+        if (!message) throw new Error('No message object was provided.');
+        if (!prefix || typeof prefix !== 'string') throw new Error('Invalid prefix.');
+        
+        if (!message.content.toLowerCase().startsWith(prefix.toLowerCase())) return;
+        
+        const split = message.content.split(' ');
+        const cmd = split[0];
+        const args = split.slice(1);
+        const command = this.commands.find(x => x.name.toLowerCase() === cmd.slice(prefix.length).toLowerCase()) || this.commands.find(x => x.aliases.includes(cmd.slice(prefix.length).toLowerCase()));
+        if (!command) return;
+        
+        if (command.guildOnly === true && message.channel.type === 1) return;
+        if (command.guildOnly === false && message.channel.type === 0) return;
+        
+        const cooldown = this.cooldowns.find(x => x.command.toLowerCase() === command.name.toLowerCase() && x.user === message.author.id);
+        if (cooldown) return message.channel.createMessage(`${this.errorMessages.cooldown}`);
+        
+        if (command.ownerOnly && message.author.id !== this.ownerId) return message.channel.createMessage(this.errorMessages.ownerOnly);
+        
+        for (const rolePerm of command.perms.bot.role) {
+            if (!message.channel.guild.members.get(this.client.user.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.bot.role.map(x => `\`${x}\``)}`)); 
+        }
+        
+        for (const channelPerm of command.perms.bot.channel) {
+            if (!message.channel.permissionsOf(this.client.user.id).has(channelPerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.bot.channel.map(x => `\`${x}\``)}`));
+        }
+        
+        for (const rolePerm of command.perms.member.role) {
+            if (!message.channel.guild.members.get(message.author.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.role.map(x => `\`${x}\``)}`)); 
+        }
+        
+        for (const channelPerm of command.perms.member.channel) {
+            if (!message.channel.permissionsOf(message.author.id).has(channelPerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.channel.map(x => `\`${x}\``)}`));
+        }
+        
+        if (command.cooldown !== 0) {
+            this.cooldowns.push({
+                command: command.name,
+                user: message.author.id
+            });
+            setTimeout(() => {
+                this.cooldowns = this.cooldowns.filter(x => x.command !== command.name && x.user !== message.author.id);
+            }, command.cooldown);
+        }
+        
+        command.run(message, args);
     }
 }
 
