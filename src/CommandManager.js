@@ -9,7 +9,7 @@ const defaultErrorMessages = {
 class CommandManager {
     /**
      * @param {Eris.Client} client - Eris client
-     * @param {Object} options - Options
+     * @param {String} ownerId - Discord user id
      */
     
     constructor(client, ownerId) {
@@ -44,7 +44,7 @@ class CommandManager {
     }
     
     /**
-     * @param {Object} [options=defaultErrorMessages]
+     * @param {Object} [options=defaultErrorMessages] Error message
      */
     
     registerErrorMessages(options) {
