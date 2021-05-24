@@ -1,11 +1,7 @@
 const req = require('require-all');
 
 const defaultErrorMessages = {
-    missingPerms: {
-        embed: {
-            description: '**Missing Permissions**\n{missingPerms}'
-        }
-    },
+    missingPerms: 'Missing Permissions: {missingPerms}',
     cooldown: 'This command is in a cooldown.',
     ownerOnly: 'This command is owner-only. You cannot use it.'
 };
@@ -83,8 +79,8 @@ class CommandManager {
         const command = this.commands.find(x => x.name.toLowerCase() === cmd.slice(prefix.length).toLowerCase()) || this.commands.find(x => x.aliases.includes(cmd.slice(prefix.length).toLowerCase()));
         if (!command) return;
         
-        if (command.guildOnly && message.channel.type === 1) return;
-        if (!command.guildOnly && message.channel.type === 0) return;
+        if (command.guildOnly === true && message.channel.type === 1) return;
+        if (command.guildOnly === false && message.channel.type === 0) return;
         
         const cooldown = this.cooldowns.find(x => x.command.toLowerCase() === command.name.toLowerCase() && x.user === message.author.id);
         if (cooldown) return message.channel.createMessage(`${this.errorMessages.cooldown}`);
@@ -100,11 +96,11 @@ class CommandManager {
         }
         
         for (const rolePerm of command.perms.member.role) {
-            if (!message.channel.guild.members.get(this.client.user.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.role.map(x => `\`${x}\``)}`)); 
+            if (!message.channel.guild.members.get(message.author.id).permissions.has(rolePerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.role.map(x => `\`${x}\``)}`)); 
         }
         
         for (const channelPerm of command.perms.member.channel) {
-            if (!message.channel.permissionsOf(this.client.user.id).has(channelPerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.channel.map(x => `\`${x}\``)}`));
+            if (!message.channel.permissionsOf(message.author.id).has(channelPerm)) return message.channel.createMessage(this.errorMessages.missingPerms.replace(/{missingPerms}/gi, `${command.perms.member.channel.map(x => `\`${x}\``)}`));
         }
         
         this.cooldowns.push({
