@@ -1,6 +1,6 @@
 {
   "name": "eris-discord-commands",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple eris command manager.",
   "main": "index.js",
   "scripts": {
